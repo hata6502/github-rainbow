@@ -1,0 +1,12 @@
+{
+  "name": "github-rainbow",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "color": "^4.2.3"
+  }
+}
