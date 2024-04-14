@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        connect-src 'self' https://us-central1-almap-408307.cloudfunctions.net;
+      "
+    />
+
+    <meta
+      property="og:image"
+      content="https://rainbow.hata6502.com/favicon.png"
+    />
+    <meta
+      property="og:title"
+      content="Contribution Rainbow 🌈 - Visualize diverse GitHub contributions"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://rainbow.hata6502.com/" />
+    <meta name="twitter:card" content="summary" />
+
+    <title>
+      Contribution Rainbow 🌈 - Visualize diverse GitHub contributions
+    </title>
+
+    <link rel="apple-touch-icon" href="favicon.png" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+
+    <link rel="stylesheet" href="index.css" />
+  </head>
+
+  <body class="prose m-6">
+    <main>
+      <h2>Contribution Rainbow 🌈</h2>
+      <p>Visualize diverse GitHub contributions</p>
+
+      <form>
+        <div class="flex items-center gap-2">
+          <label for="login" class="w-24">Username</label>
+          <input
+            id="login"
+            name="login"
+            type="text"
+            placeholder="hata6502"
+            class="block w-full mt-1"
+          />
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label for="year" class="w-24">Year</label>
+          <input
+            id="year"
+            name="year"
+            type="number"
+            class="block w-full mt-1"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="block w-full mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Generate
+        </button>
+      </form>
+
+      <h3 id="graph-title" class="mt-8"></h3>
+      <div id="graph" class="flex flex-wrap gap-1"></div>
+      <div id="legends" class="mt-4"></div>
+    </main>
+
+    <footer class="mt-8">
+      Made by
+      <a href="https://twitter.com/hata6502" target="_blank">@hata6502</a>
+    </footer>
+
+    <script type="module" src="index.js"></script>
+  </body>
+</html>

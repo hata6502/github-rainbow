@@ -68,5 +68,6 @@ functions.http("index", async (req, res) => {
   });
   const graphql = await response.json();
 
+  res.setHeader("Access-Control-Allow-Origin", process.env.ALLOW_ORIGIN);
   res.json({ dateRanges, graphql });
 });
