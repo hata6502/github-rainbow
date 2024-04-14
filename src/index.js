@@ -65,6 +65,17 @@ const response = await fetch("https://api.github.com/graphql", {
 });
 const { data } = await response.json();
 
+const computeHue = (repositoryNameWithOwner) =>
+  ([...repositoryNameWithOwner.split("/")[0]].reduce(
+    (sum, char) => sum + char.codePointAt(0) / 0x80,
+    0
+  ) %
+    1) *
+  360;
+
+const resetSequence = "\x1b[0m";
+
+const legends = new Set();
 let dateIndex = 0;
 for (const [dateRangeIndex, [from, to]] of dateRanges.entries()) {
   const { commitContributionsByRepository } =
@@ -86,31 +97,27 @@ for (const [dateRangeIndex, [from, to]] of dateRanges.entries()) {
           repositoryNameWithOwners.push(
             ...Array(commitCount).fill(repository.nameWithOwner)
           );
+          legends.add(repository.nameWithOwner);
         }
       }
     }
 
-    const hues = repositoryNameWithOwners.map(
-      (repositoryNameWithOwner) =>
-        ([...repositoryNameWithOwner].reduce(
-          // ASCII code only
-          (sum, char) => sum + char.codePointAt(0) / 0x80,
-          0
-        ) %
-          1) *
-        360
-    );
-    const hue = hues.length
-      ? hues.reduce((sum, hue) => sum + hue, 0) / hues.length
-      : 0;
+    const leastRepositoryNameWithOwner = [
+      ...Map.groupBy(
+        repositoryNameWithOwners,
+        (repositoryNameWithOwner) => repositoryNameWithOwner
+      ),
+    ]
+      .toSorted(([, a], [, b]) => a.length - b.length)
+      .at(0)?.[0];
+    const hue = computeHue(leastRepositoryNameWithOwner ?? "");
     const lightness =
-      100 - 25 * Math.min(repositoryNameWithOwners.length / 10, 1);
+      100 - 20 * Math.min(repositoryNameWithOwners.length / 1, 1);
 
-    const color = Color(`hsl(${hue} 75% ${lightness}%)`);
+    const color = Color(`hsl(${hue} 100% ${lightness}%)`);
     const colorSequence = `\x1b[38;2;${Math.round(color.red())};${Math.round(
       color.green()
     )};${Math.round(color.blue())}m`;
-    const resetSequence = "\x1b[0m";
     process.stdout.write(`${colorSequence}■ ${resetSequence}`);
     /*if (dateIndex % 7 === 6) {
       console.log();
@@ -123,3 +130,14 @@ for (const [dateRangeIndex, [from, to]] of dateRanges.entries()) {
   //console.log();
 }
 console.log();
+
+for (const legend of [...legends].toSorted()) {
+  const color = Color(`hsl(${computeHue(legend)} 100% 80%)`);
+  const colorSequence = `\x1b[38;2;${Math.round(color.red())};${Math.round(
+    color.green()
+  )};${Math.round(color.blue())}m`;
+  console.log(
+    `${colorSequence}■ ${resetSequence}`,
+    `https://github.com/${legend}`
+  );
+}
