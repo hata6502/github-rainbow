@@ -9,9 +9,9 @@ const yearElement = document.querySelector("#year");
 yearElement.defaultValue = year ?? "";
 
 const graphTitleElement = document.querySelector("#graph-title");
-graphTitleElement.textContent = `${login || "hata6502"}’s contributions in ${
-  year || "the past year"
-}`;
+graphTitleElement.textContent = `${
+  login || "hata6502"
+}’s public contributions in ${year || "the past year"}`;
 
 const response = await fetch(
   `https://us-central1-almap-408307.cloudfunctions.net/github-rainbow?${new URLSearchParams(
