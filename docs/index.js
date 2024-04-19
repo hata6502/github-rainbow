@@ -16,8 +16,8 @@ graphTitleElement.textContent = `${
 const response = await fetch(
   `https://us-central1-almap-408307.cloudfunctions.net/github-rainbow?${new URLSearchParams(
     {
-      login: login || "hata6502",
-      ...(year && { year }),
+      login: (login || "hata6502").trim(),
+      ...(year && { year: year.trim() }),
     }
   )}`
 );
