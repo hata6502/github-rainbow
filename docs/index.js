@@ -13,15 +13,26 @@ graphTitleElement.textContent = `${
   login || "hata6502"
 }’s public contributions in ${year || "the past year"}`;
 
-const response = await fetch(
-  `https://us-central1-almap-408307.cloudfunctions.net/github-rainbow?${new URLSearchParams(
-    {
-      login: (login || "hata6502").trim(),
-      ...(year && { year: year.trim() }),
-    }
-  )}`
-);
-const { dateRanges, graphql } = await response.json();
+let json;
+try {
+  const response = await fetch(
+    `https://us-central1-almap-408307.cloudfunctions.net/github-rainbow?${new URLSearchParams(
+      {
+        login: (login || "hata6502").trim(),
+        ...(year && { year: year.trim() }),
+      }
+    )}`
+  );
+  json = await response.json();
+  if (json.graphql.errors) {
+    throw new Error(json.graphql.errors[0].message);
+  }
+} catch (exception) {
+  const errorElement = document.querySelector("#error");
+  errorElement.textContent = String(exception);
+  throw exception;
+}
+const { dateRanges, graphql } = json;
 
 const computeHue = (repositoryNameWithOwner) =>
   ([...repositoryNameWithOwner.split("/")[0]].reduce(
