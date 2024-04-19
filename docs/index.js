@@ -1,6 +1,7 @@
 const urlSearchParams = new URLSearchParams(location.search);
 
 const login = urlSearchParams.get("login");
+const loginWithDefault = login || "hata6502";
 const year = urlSearchParams.get("year");
 
 const loginElement = document.querySelector("#login");
@@ -8,17 +9,30 @@ loginElement.defaultValue = login ?? "";
 const yearElement = document.querySelector("#year");
 yearElement.defaultValue = year ?? "";
 
+const loginImageElement = document.createElement("img");
+loginImageElement.src = `https://github.com/${encodeURIComponent(
+  loginWithDefault
+)}.png`;
+loginImageElement.alt = "";
+loginImageElement.classList.add("not-prose", "inline", "w-6", "h-6", "mr-1");
+const loginLinkElement = document.createElement("a");
+loginLinkElement.href = `https://github.com/${encodeURIComponent(
+  loginWithDefault
+)}`;
+loginLinkElement.target = "_blank";
+loginLinkElement.append(loginImageElement, loginWithDefault);
 const graphTitleElement = document.querySelector("#graph-title");
-graphTitleElement.textContent = `${
-  login || "hata6502"
-}’s public contributions in ${year || "the past year"}`;
+graphTitleElement.append(
+  loginLinkElement,
+  `’s public contributions in ${year || "the past year"}`
+);
 
 let json;
 try {
   const response = await fetch(
     `https://us-central1-almap-408307.cloudfunctions.net/github-rainbow?${new URLSearchParams(
       {
-        login: (login || "hata6502").trim(),
+        login: loginWithDefault.trim(),
         ...(year && { year: year.trim() }),
       }
     )}`
