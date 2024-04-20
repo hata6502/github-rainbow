@@ -13,18 +13,6 @@
       "
     />
 
-    <meta
-      property="og:image"
-      content="https://rainbow.hata6502.com/favicon.png"
-    />
-    <meta
-      property="og:title"
-      content="Contribution Rainbow - Visualize diverse GitHub contributions"
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://rainbow.hata6502.com/" />
-    <meta name="twitter:card" content="summary" />
-
     <title>Contribution Rainbow - Visualize diverse GitHub contributions</title>
 
     <link rel="apple-touch-icon" href="favicon.png" />
@@ -36,7 +24,11 @@
   <body class="prose m-6">
     <main>
       <h2>Contribution Rainbow 🌈</h2>
-      <p>Visualize diverse GitHub contributions</p>
+      <p>
+        Visualize diverse GitHub contributions<br />
+        Made by
+        <a href="https://twitter.com/hata6502" target="_blank">@hata6502</a>
+      </p>
 
       <form>
         <div class="flex items-center gap-2">
@@ -72,12 +64,8 @@
       <div id="error"></div>
       <div id="graph" class="flex flex-wrap gap-1"></div>
       <div id="legends" class="mt-4"></div>
+      <div id="share" class="mt-4"></div>
     </main>
-
-    <footer class="mt-8">
-      Made by
-      <a href="https://twitter.com/hata6502" target="_blank">@hata6502</a>
-    </footer>
 
     <script type="module" src="index.js"></script>
   </body>

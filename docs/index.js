@@ -48,12 +48,8 @@ try {
 }
 const { dateRanges, graphql } = json;
 
-const computeHue = (repositoryNameWithOwner) =>
-  ([...repositoryNameWithOwner.split("/")[0]].reduce(
-    (sum, char) => sum + char.codePointAt(0) / 0x80,
-    0
-  ) %
-    1) *
+const computeHue = (str) =>
+  ([...str].reduce((sum, char) => sum + char.codePointAt(0) / 0x80, 0) % 1) *
   360;
 
 const createCellElement = ({ hue, lightness }) => {
@@ -63,7 +59,7 @@ const createCellElement = ({ hue, lightness }) => {
   return cellElement;
 };
 
-const legends = new Set();
+const log = [];
 const graphElement = document.querySelector("#graph");
 for (const [dateRangeIndex, [from, to]] of dateRanges.entries()) {
   const { commitContributionsByRepository } =
@@ -85,7 +81,7 @@ for (const [dateRangeIndex, [from, to]] of dateRanges.entries()) {
           repositoryNameWithOwners.push(
             ...Array(commitCount).fill(repository.nameWithOwner)
           );
-          legends.add(repository.nameWithOwner);
+          log.push(repository.nameWithOwner);
         }
       }
     }
@@ -98,7 +94,7 @@ for (const [dateRangeIndex, [from, to]] of dateRanges.entries()) {
     ]
       .toSorted(([, a], [, b]) => a.length - b.length)
       .at(0)?.[0];
-    const hue = computeHue(leastRepositoryNameWithOwner ?? "");
+    const hue = computeHue((leastRepositoryNameWithOwner ?? "").split("/")[0]);
     const lightness =
       100 - 20 * Math.min(repositoryNameWithOwners.length / 1, 1);
 
@@ -106,21 +102,113 @@ for (const [dateRangeIndex, [from, to]] of dateRanges.entries()) {
   }
 }
 
-const legendsElement = document.querySelector("#legends");
-for (const legend of [...legends].toSorted()) {
-  const legendElement = document.createElement("div");
-  legendElement.classList.add("flex", "items-center", "gap-1");
+const legends = [
+  ...Map.groupBy(
+    log,
+    (repositoryNameWithOwner) => repositoryNameWithOwner.split("/")[0]
+  ),
+]
+  .map(([owner, repositoryNameWithOwners]) => [
+    owner,
+    [
+      ...Map.groupBy(
+        repositoryNameWithOwners,
+        (repositoryNameWithOwner) => repositoryNameWithOwner.split("/")[1]
+      ),
+    ]
+      .map(([repositoryName, repositoryNameWithOwners]) => [
+        repositoryName,
+        repositoryNameWithOwners.length,
+      ])
+      .toSorted(([, a], [, b]) => b - a),
+  ])
+  .toSorted(
+    ([, a], [, b]) =>
+      b.reduce((sum, [, count]) => sum + count, 0) -
+      a.reduce((sum, [, count]) => sum + count, 0)
+  );
 
-  legendElement.append(
-    createCellElement({ hue: computeHue(legend), lightness: 80 })
+const legendsElement = document.querySelector("#legends");
+for (const [owner, repositoryNames] of legends) {
+  const countElement = document.createElement("span");
+  countElement.classList.add("w-12", "text-right");
+  countElement.textContent = String(
+    repositoryNames.reduce((sum, [, count]) => sum + count, 0)
   );
 
   const linkElement = document.createElement("a");
-  linkElement.href = `https://github.com/${legend}`;
+  linkElement.href = `https://github.com/${encodeURIComponent(owner)}`;
   linkElement.target = "_blank";
   linkElement.classList.add("font-normal");
-  linkElement.textContent = legend;
-  legendElement.append(linkElement);
+  linkElement.textContent = owner;
 
-  legendsElement.append(legendElement);
+  const summaryLabelElement = document.createElement("div");
+  summaryLabelElement.classList.add(
+    "inline-flex",
+    "items-center",
+    "gap-1",
+    "prose"
+  );
+  summaryLabelElement.append(countElement, linkElement);
+  const summaryElement = document.createElement("summary");
+  summaryElement.classList.add(
+    "-ml-4",
+    "sticky",
+    "top-0",
+    "bg-white",
+    "cursor-pointer",
+    "list-outside"
+  );
+  summaryElement.style.color = `hsl(${computeHue(owner)} 100% 80%)`;
+  summaryElement.append(summaryLabelElement);
+
+  const repositoryNameElements = repositoryNames.map(
+    ([repositoryName, count]) => {
+      const countElement = document.createElement("span");
+      countElement.classList.add("w-12", "text-right");
+      countElement.textContent = String(count);
+
+      const linkElement = document.createElement("a");
+      linkElement.href = `https://github.com/${encodeURIComponent(
+        owner
+      )}/${encodeURIComponent(repositoryName)}`;
+      linkElement.target = "_blank";
+      linkElement.classList.add("font-normal");
+      linkElement.textContent = repositoryName;
+
+      const repositoryNameElement = document.createElement("div");
+      repositoryNameElement.classList.add(
+        "flex",
+        "items-center",
+        "gap-1",
+        "-ml-4"
+      );
+      repositoryNameElement.append(countElement, linkElement);
+      return repositoryNameElement;
+    }
+  );
+
+  const detailsElement = document.createElement("details");
+  detailsElement.classList.add("ml-8");
+  detailsElement.append(summaryElement, ...repositoryNameElements);
+  legendsElement.append(detailsElement);
 }
+
+const shareText = `${graphTitleElement.textContent}
+${legends
+  .map(
+    ([owner]) =>
+      ["🟧", "🟨", "🟩", "🟦", "🟪", "🟥"][Math.floor(computeHue(owner) / 60)]
+  )
+  .join("")}
+`;
+const shareElement = document.querySelector("#share");
+const shareButtonElement = document.createElement("a");
+shareButtonElement.href = `https://twitter.com/share?${new URLSearchParams({
+  text: shareText,
+  url: location.href,
+  hashtags: "ContributionRainbow",
+})}`;
+shareButtonElement.target = "_blank";
+shareButtonElement.textContent = "Tweet";
+shareElement.append(shareButtonElement);
