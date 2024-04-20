@@ -196,19 +196,20 @@ for (const [owner, repositoryNames] of legends) {
 
 const shareText = `${graphTitleElement.textContent}
 ${legends
-  .map(
-    ([owner]) =>
-      ["🟧", "🟨", "🟩", "🟦", "🟪", "🟥"][Math.floor(computeHue(owner) / 60)]
-  )
+  .map(([owner]) => computeHue(owner))
+  .toSorted((a, b) => a - b)
+  .map((hue) => ["🟧", "🟨", "🟩", "🟦", "🟪", "🟥"][Math.floor(hue / 60)])
   .join("")}
 `;
 const shareElement = document.querySelector("#share");
 const shareButtonElement = document.createElement("a");
-shareButtonElement.href = `https://twitter.com/share?${new URLSearchParams({
-  text: shareText,
-  url: location.href,
-  hashtags: "ContributionRainbow",
-})}`;
+shareButtonElement.href = `https://twitter.com/intent/post?${new URLSearchParams(
+  {
+    text: shareText,
+    url: location.href,
+    hashtags: "ContributionRainbow",
+  }
+)}`;
 shareButtonElement.target = "_blank";
 shareButtonElement.textContent = "Tweet";
 shareElement.append(shareButtonElement);
