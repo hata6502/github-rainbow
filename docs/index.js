@@ -248,14 +248,14 @@ const handleIntersection = async () => {
     errorElement.textContent = String(exception);
     throw exception;
   } finally {
+    loading = false;
+
     // https://github.blog/2008-04-10-we-launched/
     if (year < 2008) {
       intersectionObserver.disconnect();
     } else {
-      intersectionObserver.observe(graphElement.lastElementChild);
+      intersectionObserver.observe(graphElement, { threshold: 1.0 });
     }
-
-    loading = false;
   }
 };
 const intersectionObserver = new IntersectionObserver(handleIntersection);
