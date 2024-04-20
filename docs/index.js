@@ -26,25 +26,18 @@ const handleIntersection = async () => {
   }
   loading = true;
   try {
-    let json;
-    try {
-      const response = await fetch(
-        `https://us-central1-almap-408307.cloudfunctions.net/github-rainbow?${new URLSearchParams(
-          {
-            login: loginWithDefault,
-            year: String(year),
-          }
-        )}`
-      );
-      json = await response.json();
-      if (json.graphql.errors) {
-        throw new Error(json.graphql.errors[0].message);
-      }
-    } catch (exception) {
-      errorElement.textContent = String(exception);
-      throw exception;
+    const response = await fetch(
+      `https://us-central1-almap-408307.cloudfunctions.net/github-rainbow?${new URLSearchParams(
+        {
+          login: loginWithDefault,
+          year: String(year),
+        }
+      )}`
+    );
+    const { dateRanges, graphql } = await response.json();
+    if (graphql.errors) {
+      throw new Error(json.graphql.errors[0].message);
     }
-    const { dateRanges, graphql } = json;
 
     const cellElements = [];
     const log = [];
@@ -251,6 +244,9 @@ const handleIntersection = async () => {
 
     graphElement.append(yearHeaderElement, yearGraphElement, yearDialogElement);
     year--;
+  } catch (exception) {
+    errorElement.textContent = String(exception);
+    throw exception;
   } finally {
     // https://github.blog/2008-04-10-we-launched/
     if (year < 2008) {
