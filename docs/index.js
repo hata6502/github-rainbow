@@ -16,16 +16,10 @@ const createCellElement = ({ hue, lightness }) => {
   return cellElement;
 };
 
-let loading = false;
-let year = new Date().getFullYear();
 const errorElement = document.querySelector("#error");
-const footerElement = document.querySelector("#footer");
 const graphElement = document.querySelector("#graph");
-const handleIntersection = async () => {
-  if (loading) {
-    return;
-  }
-  loading = true;
+// https://github.blog/2008-04-10-we-launched/
+for (let year = new Date().getFullYear(); year >= 2008; year--) {
   try {
     const response = await fetch(
       `https://us-central1-almap-408307.cloudfunctions.net/github-rainbow?${new URLSearchParams(
@@ -244,20 +238,8 @@ const handleIntersection = async () => {
     yearHeaderElement.append(headerButtonElement);
 
     graphElement.append(yearHeaderElement, yearGraphElement, yearDialogElement);
-    year--;
   } catch (exception) {
     errorElement.textContent = String(exception);
     throw exception;
-  } finally {
-    loading = false;
-
-    // https://github.blog/2008-04-10-we-launched/
-    if (year < 2008) {
-      intersectionObserver.disconnect();
-    } else {
-      intersectionObserver.observe(footerElement);
-    }
   }
-};
-const intersectionObserver = new IntersectionObserver(handleIntersection);
-handleIntersection();
+}
