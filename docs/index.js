@@ -256,7 +256,7 @@ const handleIntersection = async () => {
     if (year < 2008) {
       intersectionObserver.disconnect();
     } else {
-      intersectionObserver.observe(graphElement, { threshold: 1 });
+      intersectionObserver.observe(graphElement.lastElementChild);
     }
 
     loading = false;
