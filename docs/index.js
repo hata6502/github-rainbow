@@ -208,6 +208,7 @@ const handleIntersection = async () => {
       );
 
       const detailsElement = document.createElement("details");
+      detailsElement.open = true;
       detailsElement.classList.add("ml-8");
       detailsElement.append(summaryElement, ...repositoryNameElements);
       dialogLegendsElement.append(detailsElement);
