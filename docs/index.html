@@ -42,16 +42,6 @@
           />
         </div>
 
-        <div class="flex items-center gap-2">
-          <label for="year" class="w-24">Year</label>
-          <input
-            id="year"
-            name="year"
-            type="number"
-            class="block w-full mt-1"
-          />
-        </div>
-
         <button
           type="submit"
           class="block w-full mt-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -60,11 +50,8 @@
         </button>
       </form>
 
-      <h3 id="graph-title" class="mt-8"></h3>
+      <div id="graph" class="mt-8"></div>
       <div id="error"></div>
-      <div id="graph" class="flex flex-wrap gap-1"></div>
-      <div id="legends" class="mt-4"></div>
-      <div id="share" class="mt-4"></div>
     </main>
 
     <script type="module" src="index.js"></script>
