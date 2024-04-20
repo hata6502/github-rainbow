@@ -19,6 +19,7 @@ const createCellElement = ({ hue, lightness }) => {
 let loading = false;
 let year = new Date().getFullYear();
 const errorElement = document.querySelector("#error");
+const footerElement = document.querySelector("#footer");
 const graphElement = document.querySelector("#graph");
 const handleIntersection = async () => {
   if (loading) {
@@ -254,7 +255,7 @@ const handleIntersection = async () => {
     if (year < 2008) {
       intersectionObserver.disconnect();
     } else {
-      intersectionObserver.observe(errorElement);
+      intersectionObserver.observe(footerElement);
     }
   }
 };
