@@ -9,6 +9,26 @@ const computeHue = (str) =>
   ([...str].reduce((sum, char) => sum + char.codePointAt(0) / 0x80, 0) % 1) *
   360;
 
+const createLoginLinkElement = () => {
+  const loginImageElement = document.createElement("img");
+  loginImageElement.src = `https://github.com/${encodeURIComponent(
+    loginWithDefault
+  )}.png`;
+  loginImageElement.alt = "";
+  loginImageElement.classList.add("not-prose", "inline", "w-6", "h-6", "mr-1");
+
+  const loginLinkElement = document.createElement("a");
+  loginLinkElement.href = `https://github.com/${encodeURIComponent(
+    loginWithDefault
+  )}`;
+  loginLinkElement.target = "_blank";
+  loginLinkElement.append(loginImageElement, loginWithDefault);
+  return loginLinkElement;
+};
+
+const titleElement = document.querySelector("#title");
+titleElement.append(createLoginLinkElement(), "’s public contributions");
+
 const errorElement = document.querySelector("#error");
 const graphElement = document.querySelector("#graph");
 // https://github.blog/2008-04-10-we-launched/
@@ -90,28 +110,10 @@ for (let year = new Date().getFullYear(); year >= 2008; year--) {
     yearGraphElement.classList.add("flex", "flex-wrap", "gap-1", "mt-2");
     yearGraphElement.append(...cellElements.toReversed());
 
-    const loginImageElement = document.createElement("img");
-    loginImageElement.src = `https://github.com/${encodeURIComponent(
-      loginWithDefault
-    )}.png`;
-    loginImageElement.alt = "";
-    loginImageElement.classList.add(
-      "not-prose",
-      "inline",
-      "w-6",
-      "h-6",
-      "mr-1"
-    );
-    const loginLinkElement = document.createElement("a");
-    loginLinkElement.href = `https://github.com/${encodeURIComponent(
-      loginWithDefault
-    )}`;
-    loginLinkElement.target = "_blank";
-    loginLinkElement.append(loginImageElement, loginWithDefault);
     const dialogTitleElement = document.createElement("h3");
     dialogTitleElement.classList.add("mt-0");
     dialogTitleElement.append(
-      loginLinkElement,
+      createLoginLinkElement(),
       `’s public contributions in ${year}`
     );
 
