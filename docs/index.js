@@ -70,11 +70,11 @@ for (let year = new Date().getFullYear(); year >= 2008; year--) {
 
         const cellElement = document.createElement("a");
         const query = `author:${loginWithDefault} author-date:${String(
-          date.getFullYear()
-        ).padStart(4, "0")}-${String(date.getMonth() + 1).padStart(
+          date.getUTCFullYear()
+        ).padStart(4, "0")}-${String(date.getUTCMonth() + 1).padStart(
           2,
           "0"
-        )}-${String(date.getDate()).padStart(2, "0")}`;
+        )}-${String(date.getUTCDate()).padStart(2, "0")}`;
         cellElement.href = `https://github.com/search?${new URLSearchParams({
           type: "commits",
           q: query,
