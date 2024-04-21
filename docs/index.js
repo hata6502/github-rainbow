@@ -9,13 +9,6 @@ const computeHue = (str) =>
   ([...str].reduce((sum, char) => sum + char.codePointAt(0) / 0x80, 0) % 1) *
   360;
 
-const createCellElement = ({ hue, lightness }) => {
-  const cellElement = document.createElement("div");
-  cellElement.classList.add("w-2", "h-2");
-  cellElement.style.background = `hsl(${hue} 100% ${lightness}%)`;
-  return cellElement;
-};
-
 const errorElement = document.querySelector("#error");
 const graphElement = document.querySelector("#graph");
 // https://github.blog/2008-04-10-we-launched/
@@ -75,7 +68,21 @@ for (let year = new Date().getFullYear(); year >= 2008; year--) {
         const lightness =
           100 - 20 * Math.min(repositoryNameWithOwners.length / 1, 1);
 
-        cellElements.push(createCellElement({ hue, lightness }));
+        const cellElement = document.createElement("a");
+        const query = `author:${loginWithDefault} author-date:${String(
+          date.getFullYear()
+        ).padStart(4, "0")}-${String(date.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}-${String(date.getDate()).padStart(2, "0")}`;
+        cellElement.href = `https://github.com/search?${new URLSearchParams({
+          type: "commits",
+          q: query,
+        })}`;
+        cellElement.target = "_blank";
+        cellElement.classList.add("block", "w-2", "h-2");
+        cellElement.style.background = `hsl(${hue} 100% ${lightness}%)`;
+        cellElements.push(cellElement);
       }
     }
 
