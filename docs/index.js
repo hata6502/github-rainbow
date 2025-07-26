@@ -32,7 +32,7 @@ titleElement.append(createLoginLinkElement(), "’s public contributions");
 const errorElement = document.querySelector("#error");
 const graphElement = document.querySelector("#graph");
 // https://github.blog/2008-04-10-we-launched/
-for (let year = new Date().getFullYear(); year >= 2008; year--) {
+for (let year = new Date().getUTCFullYear(); year >= 2008; year--) {
   try {
     const response = await fetch(
       `https://us-central1-almap-408307.cloudfunctions.net/github-rainbow?${new URLSearchParams(
@@ -56,7 +56,7 @@ for (let year = new Date().getFullYear(); year >= 2008; year--) {
       for (
         const date = new Date(from);
         date.getTime() < new Date(to).getTime();
-        date.setDate(date.getDate() + 1)
+        date.setUTCDate(date.getUTCDate() + 1)
       ) {
         const repositoryNameWithOwners = [];
 
@@ -65,7 +65,7 @@ for (let year = new Date().getFullYear(); year >= 2008; year--) {
           repository,
         } of commitContributionsByRepository) {
           for (const { commitCount, occurredAt } of contributions.nodes) {
-            if (new Date(occurredAt).getDate() === date.getDate()) {
+            if (new Date(occurredAt).getUTCDate() === date.getUTCDate()) {
               repositoryNameWithOwners.push(
                 ...Array(commitCount).fill(repository.nameWithOwner)
               );
